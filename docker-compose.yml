@@ -1,0 +1,28 @@
+# Demo and test environment: SQL Server 2017 (source) and SQL Server 2022 (target), both Linux containers.
+# The password below is for local demos only. Do not reuse it anywhere.
+#
+#   docker compose up -d
+#   scripts/restore_adventureworks.sh        # downloads AdventureWorks2017.bak once, restores into both
+#
+# On Apple Silicon these x86 images run under emulation: allow 4 GB or more for Docker and expect slow starts.
+services:
+  sql2017:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    platform: linux/amd64
+    container_name: dbagent-sql2017
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${DBAGENT_DEMO_SA_PASSWORD:-DbAgent_Demo_2017!}"
+      MSSQL_PID: Developer
+    ports: ["14331:1433"]
+    volumes: ["./data:/backup:ro"]
+  sql2022:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    container_name: dbagent-sql2022
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${DBAGENT_DEMO_SA_PASSWORD:-DbAgent_Demo_2017!}"
+      MSSQL_PID: Developer
+    ports: ["14332:1433"]
+    volumes: ["./data:/backup:ro"]

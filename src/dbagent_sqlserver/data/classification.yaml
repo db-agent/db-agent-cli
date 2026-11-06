@@ -1,0 +1,29 @@
+# Default rules for classifying SSRS reports as move, review or retire.
+# Copy this file, edit it, and pass it with --config.
+
+# A report with no runs in this many days is "retire" ... but only if the usage log
+# reaches back at least this far. SSRS keeps only 60 days of log by default, so a short
+# log makes the answer "review", never "retire".
+retire_after_days: 365
+min_log_window_days: 365
+
+# Fewer runs than this in the last 365 days sends a report to review (it may be retire later).
+low_usage_runs_365: 6
+
+# More than this share of runs ending in an error sends a report to review.
+error_rate_review: 0.5
+
+# More expressions than this (formulas that start with "=") sends a report to review.
+complex_expression_threshold: 150
+
+# Features that send a report to review. Set to false to ignore one.
+review_if:
+  custom_code: true
+  custom_assemblies: true
+  subreports: true
+  drillthrough: true
+  complex_subscription: true
+  parse_failure: true
+  non_sql_data_source: true
+  unresolved_shared_dataset: true
+  stored_procedure_dataset: false

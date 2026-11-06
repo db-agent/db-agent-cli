@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SQL Server upgrade and SSRS report summary</title>
+<style>
+  :root { --ink:#1b2430; --muted:#5b6675; --line:#d9dfe7; --bg:#ffffff; --panel:#f5f7fa; --accent:#1f3a5f;
+          --high:#b3261e; --medium:#a35a00; --low:#4a5a6a; --move:#1d7a46; --review:#a35a00; --retire:#6b4aa0; --pass:#1d7a46; --fail:#b3261e; }
+  * { box-sizing: border-box; }
+  body { font: 15px/1.5 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); background: var(--bg); margin: 0; }
+  main { max-width: 960px; margin: 0 auto; padding: 28px 20px 48px; }
+  h1 { font-size: 26px; margin: 0 0 4px; color: var(--accent); }
+  h2 { font-size: 19px; margin: 34px 0 10px; padding-bottom: 6px; border-bottom: 2px solid var(--line); color: var(--accent); }
+  h3 { font-size: 15px; margin: 18px 0 6px; }
+  .sub { color: var(--muted); margin: 0 0 18px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 14px 0; }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+  .tile b { display: block; font-size: 24px; line-height: 1.2; }
+  .tile span { color: var(--muted); font-size: 13px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; margin: 8px 0; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--panel); font-weight: 600; }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; color: #fff; }
+  .high,.fail { background: var(--high); } .medium { background: var(--medium); } .low,.skipped,.info { background: var(--low); }
+  .move,.pass { background: var(--move); } .review { background: var(--review); } .retire { background: var(--retire); }
+  .bar { display: flex; height: 22px; border-radius: 6px; overflow: hidden; margin: 8px 0; border: 1px solid var(--line); }
+  .bar i { display: block; height: 100%; }
+  .note { background: #fff7e6; border: 1px solid #f0d49b; border-radius: 8px; padding: 10px 12px; margin: 12px 0; }
+  .legend span { margin-right: 14px; font-size: 13px; }
+  ol.steps li { margin: 4px 0; }
+  a { color: var(--accent); }
+  footer { margin-top: 40px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+  .small { color: var(--muted); font-size: 12.5px; }
+  @media print { main { max-width: none; padding: 0; } h2 { break-after: avoid; } table, .tile { break-inside: avoid; } a { color: inherit; text-decoration: none; } }
+</style>
+</head>
+<body>
+<main>
+<h1>SQL Server upgrade and SSRS report summary</h1>
+<p class="sub">Generated {{ s.generated }} by db-agent SQL Server Kit {{ s.version }}. Read-only: nothing was changed on any server.</p>
+
+<h2>Executive summary</h2>
+<div class="tiles">
+  {% if s.have_inventory %}
+  <div class="tile"><b>{{ s.server.product_version }}</b><span>{{ s.server.edition }}</span></div>
+  <div class="tile"><b>{{ s.eos.date or 'not in table' }}</b><span>{{ s.eos.name }} end of support{% if s.eos.days is not none %}, {% if s.eos.days < 0 %}ended {{ -s.eos.days }} days ago{% else %}{{ s.eos.days }} days left{% endif %}{% endif %}</span></div>
+  <div class="tile"><b>{{ s.db_count }}</b><span>user databases, {{ s.db_size_gb }} GB</span></div>
+  <div class="tile"><b>{{ s.risk_counts.get('high', 0) }} / {{ s.risk_counts.get('medium', 0) }} / {{ s.risk_counts.get('low', 0) }}</b><span>risks: high / medium / low</span></div>
+  {% endif %}
+  {% if s.have_ssrs %}
+  <div class="tile"><b>{{ s.ssrs.total }}</b><span>SSRS reports</span></div>
+  <div class="tile"><b>{{ s.ssrs.used }} / {{ s.ssrs.unused }}</b><span>used / not used (365 days)</span></div>
+  <div class="tile"><b>{{ s.ssrs.counts.get('move', 0) }} / {{ s.ssrs.counts.get('review', 0) }} / {{ s.ssrs.counts.get('retire', 0) }}</b><span>move / review / retire</span></div>
+  {% endif %}
+  {% if s.have_validation %}
+  <div class="tile"><b>{{ s.validation.counts.get('pass', 0) }} / {{ s.validation.counts.get('fail', 0) }} / {{ s.validation.counts.get('skipped', 0) }}</b><span>validation pass / fail / skipped</span></div>
+  {% endif %}
+</div>
+
+<h3>Suggested next steps</h3>
+<ol class="steps">{% for t in s.next_steps %}<li>{{ t }}</li>{% endfor %}</ol>
+
+{% if s.have_inventory %}
+<h2>Databases</h2>
+<table>
+<tr><th>Database</th><th class="n">Compat level</th><th class="n">Data MB</th><th class="n">Log MB</th><th>Recovery</th></tr>
+{% for d in s.databases %}<tr><td>{{ d.name }}</td><td class="n">{{ d.compatibility_level }}</td><td class="n">{{ d.data_mb }}</td><td class="n">{{ d.log_mb }}</td><td>{{ d.recovery_model_desc }}</td></tr>{% endfor %}
+</table>
+
+<h2>Top risks</h2>
+<table>
+<tr><th>Severity</th><th>Finding</th><th class="n">Count</th><th>Example</th><th>Source</th></tr>
+{% for r in s.top_risks %}<tr><td><span class="tag {{ r.severity }}">{{ r.severity }}</span></td><td>{{ r.title }}<div class="small">{{ r.detail }}</div></td><td class="n">{{ r.count }}</td><td>{{ r.example }}</td><td><a href="{{ r.doc }}">Microsoft docs</a></td></tr>{% endfor %}
+</table>
+<p class="small">Every risk is in risks.csv. Rules come from Microsoft's deprecated and discontinued feature lists. Dynamic SQL held in strings is not scanned.</p>
+{% if s.warnings %}<div class="note"><b>Not collected:</b> {{ s.warnings | length }} item(s), for example missing permissions. See inventory.md.</div>{% endif %}
+{% endif %}
+
+{% if s.have_ssrs %}
+<h2>SSRS reports</h2>
+{% set c = s.ssrs.counts %}{% set t = s.ssrs.total or 1 %}
+<div class="bar">
+  <i style="width:{{ 100 * c.get('move', 0) / t }}%; background:var(--move)"></i>
+  <i style="width:{{ 100 * c.get('review', 0) / t }}%; background:var(--review)"></i>
+  <i style="width:{{ 100 * c.get('retire', 0) / t }}%; background:var(--retire)"></i>
+</div>
+<p class="legend"><span><span class="tag move">move</span> {{ c.get('move', 0) }}</span><span><span class="tag review">review</span> {{ c.get('review', 0) }}</span><span><span class="tag retire">retire</span> {{ c.get('retire', 0) }}</span></p>
+{% if s.ssrs.usage.source %}
+<p>Usage comes from {{ s.ssrs.usage.source }}. The log reaches back {{ s.ssrs.usage.log_window_days }} days (oldest entry {{ s.ssrs.usage.oldest }}).</p>
+{% if (s.ssrs.usage.log_window_days or 0) < 365 %}<div class="note"><b>The usage log is shorter than a year.</b> SSRS keeps 60 days by default, so a quarterly or yearly report can look unused. No report is marked retire until the log covers 365 days.</div>{% endif %}
+{% else %}<div class="note"><b>No usage data.</b> Without it, no report is marked retire.</div>{% endif %}
+
+<h3>Hard-to-move features</h3>
+<table>
+<tr><th>Feature</th><th class="n">Reports</th></tr>
+<tr><td>Custom code blocks</td><td class="n">{{ s.ssrs.hard.custom_code }}</td></tr>
+<tr><td>Custom assemblies</td><td class="n">{{ s.ssrs.hard.custom_assemblies }}</td></tr>
+<tr><td>Subreports</td><td class="n">{{ s.ssrs.hard.subreports }}</td></tr>
+<tr><td>Drillthrough</td><td class="n">{{ s.ssrs.hard.drillthrough }}</td></tr>
+<tr><td>Subscriptions{% if not s.ssrs.subscriptions_known %} (not read){% endif %}</td><td class="n">{{ s.ssrs.hard.subscriptions }}</td></tr>
+<tr><td>SQL that could not be fully parsed</td><td class="n">{{ s.ssrs.hard.parse_problems }}</td></tr>
+</table>
+<p class="small">Layout hint only: {{ s.ssrs.paginated_hint }} look like printable tabular reports (suit Power BI paginated reports); {{ s.ssrs.interactive_hint }} use charts, gauges, maps or show/hide toggles (likely an interactive rebuild).</p>
+
+<h3>Top 20 reports by use (last 365 days)</h3>
+<table>
+<tr><th>Report</th><th class="n">Runs 365d</th><th class="n">Runs 90d</th><th class="n">Users</th><th>Last run</th><th>Class</th></tr>
+{% for r in s.ssrs.top_used %}<tr><td>{{ r.path }}</td><td class="n">{{ r.runs_365 }}</td><td class="n">{{ r.runs_90 }}</td><td class="n">{{ r.distinct_users }}</td><td>{{ r.last_run }}</td><td><span class="tag {{ r.classification }}">{{ r.classification }}</span></td></tr>
+{% else %}<tr><td colspan="6">No usage data.</td></tr>{% endfor %}
+</table>
+
+<h3>Tables used most by reports</h3>
+<table>
+<tr><th>Table</th><th class="n">Reports</th></tr>
+{% for tbl, n in s.ssrs.tables %}<tr><td>{{ tbl }}</td><td class="n">{{ n }}</td></tr>{% endfor %}
+</table>
+<p class="small">Best effort from parsing report SQL. Reports that call stored procedures list the procedure, not its tables.</p>
+
+{% if s.ssrs.retire %}<h3>Retire candidates</h3>
+<table><tr><th>Report</th><th>Reason</th></tr>
+{% for r in s.ssrs.retire %}<tr><td>{{ r.path }}</td><td>{{ r.reasons | join('; ') }}</td></tr>{% endfor %}</table>{% endif %}
+
+{% if s.ssrs.review %}<h3>Needs review</h3>
+<table><tr><th>Report</th><th>Reason</th></tr>
+{% for r in s.ssrs.review %}<tr><td>{{ r.path }}</td><td>{{ r.reasons | join('; ') }}</td></tr>{% endfor %}</table>{% endif %}
+{% endif %}
+
+{% if s.have_validation %}
+<h2>Validation after the move</h2>
+<p>Row counts and totals of numeric columns were compared between the old and new server. No row values are stored.</p>
+<table>
+<tr><th>Report</th><th>Dataset</th><th>Status</th><th class="n">Source rows</th><th class="n">Target rows</th><th>Note</th></tr>
+{% for v in s.validation.rows %}<tr><td>{{ v.report }}</td><td>{{ v.dataset }}</td><td><span class="tag {{ v.status }}">{{ v.status }}</span></td><td class="n">{{ v.source_rows if v.source_rows is not none else '' }}</td><td class="n">{{ v.target_rows if v.target_rows is not none else '' }}</td><td>{{ v.differences or v.reason }}</td></tr>{% endfor %}
+</table>
+{% endif %}
+
+<footer>{{ s.footer }}</footer>
+</main>
+</body>
+</html>

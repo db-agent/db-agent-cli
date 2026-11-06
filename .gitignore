@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+dbagent-sqlserver-output/
+private_out/
+.pytest_cache/
+dist/
+build/
+*.egg-info/
+/data/

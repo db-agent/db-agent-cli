@@ -1,0 +1,18 @@
+# Apple Silicon fallback for tests: Azure SQL Edge runs natively on ARM (no emulation).
+# It is NOT SQL Server 2017/2022: it is a smaller engine (SQL Server 2019 core) with no SQL Server Agent,
+# no CLR and a smaller feature set. It is good enough to test the queries, the guard and `validate`.
+# Azure SQL Edge was retired by Microsoft in September 2025; the image may disappear.
+#   docker compose -f docker-compose.edge.yml up -d && python scripts/restore_adventureworks.py
+services:
+  source:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    container_name: dbagent-edge-source
+    environment: { ACCEPT_EULA: "1", MSSQL_SA_PASSWORD: "${DBAGENT_DEMO_SA_PASSWORD:-DbAgent_Demo_2017!}" }
+    ports: ["14331:1433"]
+    volumes: ["./data:/backup:ro"]
+  target:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    container_name: dbagent-edge-target
+    environment: { ACCEPT_EULA: "1", MSSQL_SA_PASSWORD: "${DBAGENT_DEMO_SA_PASSWORD:-DbAgent_Demo_2017!}" }
+    ports: ["14332:1433"]
+    volumes: ["./data:/backup:ro"]

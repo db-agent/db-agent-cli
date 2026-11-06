@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "db-agent-sqlserver"
+version = "0.1.0"
+description = "Read-only CLI to inventory SQL Server and SSRS reports before a SQL Server 2016/2017 upgrade or a move to Power BI."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+dependencies = [
+  "typer>=0.12",
+  "pymssql>=2.3",
+  "sqlglot>=25",
+  "lxml>=5",
+  "pandas>=2.2",
+  "openpyxl>=3.1",
+  "jinja2>=3.1",
+  "pyyaml>=6",
+]
+
+[project.optional-dependencies]
+odbc = ["pyodbc>=5"]
+dev = ["pytest>=8"]
+
+[project.scripts]
+db-agent-sqlserver = "dbagent_sqlserver.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dbagent_sqlserver"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: needs a live SQL Server (set DBAGENT_TEST_SERVER)"]
