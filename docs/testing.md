@@ -44,13 +44,30 @@ and failed on machines with 17 or 13 (now auto-detected, override with `DBAGENT_
 every normal install (a test now checks the built wheel); a certificate error now says to use `--trust-server-certificate`.
 Not exercised: a failed report counts as a run in the usage numbers (VendorSpend returned HTTP 500 and still shows 2 runs).
 
+## Seeded legacy objects and scale (tested 2026-11-06)
+
+`scripts/seed_risky_objects.py` creates a database full of legacy objects, and `tests/seeded/` checks each is reported. Run on
+SQL Server 2017 (Linux) and on SQL Server 2016 (Windows, which adds a real CLR assembly compiled on the VM). Covered on real
+engines: `text`/`ntext`/`image` columns, stand-alone defaults and rules, `SET ROWCOUNT`, `GROUP BY ALL`, MD5 hashing, table hints
+without `WITH`, compatibility views, `DBCC DBREINDEX`, `SET FMTONLY`, `ANSI_NULLS OFF`, `xp_cmdshell`, encrypted modules,
+cross-database references and synonyms, a synonym through a linked server, a linked server, Service Broker, a CLR assembly,
+and an Agent job with deprecated code. A real SSRS subscription (file share, stored credentials) was read from the catalog and moved
+its report from move to review.
+
+Found and fixed: a reference to a name that is not a database on the server was silently dropped; it is now reported as
+`cross-db-ref-unresolved` (low), because a dependency on a database that is not being moved is what a migration needs to know.
+Also, run-command style output limits cost an hour, and SQL Agent does not restart on its own on the VM image; neither is a kit issue.
+
+Scale, on a SQL Server 2017 container under emulation and a Mac laptop: 5,000 tables, 2,000 procedures, 1,000 views
+(inventory 4.7 s, 188 MB peak) and 3,000 reports (`ssrs` 7.8 s, 226 MB; `report` 2.7 s, 150 MB). Output was 34 MB
+and `summary.html` stayed 12 KB. Not measured: remote servers over a slow network, and real SSRS catalogs of that size.
+
 ## Not covered
 
-- **CLR and Service Broker on real objects.** The test databases (AdventureWorks) have none, so those risk rules ran on hand-made data only. (SQL Agent jobs were read from a real msdb on SQL Server 2016.)
 - **Other SSRS versions.** Real SSRS was tested on 2016 only. 2017, 2019, 2022 and Power BI Report Server catalogs are unverified, and so are shared data sources, real subscriptions and encrypted-credential data sources.
 - Sample reports were never opened in Report Builder or rendered.
 - Domain (Kerberos) Windows authentication, Entra ID and Azure SQL Managed Instance.
-- Large installs: tens of thousands of objects, thousands of reports, very large datasets in `validate`.
+- Very large datasets in `validate`, and installs well beyond the sizes below (tens of thousands of tables, 100+ databases).
 - Packaging: PyPI, Docker image, Windows `.exe`.
 
 ## Azure SQL Database (tested 2026-11-06)

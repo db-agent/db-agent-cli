@@ -117,12 +117,18 @@ def assess(inv: dict[str, Any], target_major: int = 16) -> list[Risk]:
             if x["referenced_server_name"]:
                 risks.append(Risk("cross-server-ref", "high", "dependency", "Reference through a linked server", dbname,
                                   _fmt(x["referencing_schema"], x["referencing_object"]), f"References {target}.", DOC_AZURE_DIFF, True))
-            elif (x["referenced_database_name"] and x["referenced_database_name"].lower() != dbname.lower()
-                  and x["referenced_database_name"].lower() in known_dbs):
-                # Names that are not databases on this server are skipped: the dependency view also lists XML
-                # method calls (for example Resume.ref.value) as if they were database references.
-                risks.append(Risk("cross-db-ref", "medium", "dependency", "Cross-database reference", dbname,
-                                  _fmt(x["referencing_schema"], x["referencing_object"]), f"References {target}. Cross-database queries are not supported in Azure SQL Database.", DOC_AZURE_DIFF, True))
+            elif x["referenced_database_name"] and x["referenced_database_name"].lower() != dbname.lower():
+                if x["referenced_database_name"].lower() in known_dbs:
+                    risks.append(Risk("cross-db-ref", "medium", "dependency", "Cross-database reference", dbname,
+                                      _fmt(x["referencing_schema"], x["referencing_object"]), f"References {target}. Cross-database queries are not supported in Azure SQL Database.", DOC_AZURE_DIFF, True))
+                else:
+                    # The dependency view also lists XML method calls (for example Resume.ref.value) as if they were
+                    # database references, so a name that is not a database here cannot be called a dependency with
+                    # certainty. It can also be a real database that is missing from, or lives outside, this server.
+                    risks.append(Risk("cross-db-ref-unresolved", "low", "dependency", "Reference to a name that is not a database on this server",
+                                      dbname, _fmt(x["referencing_schema"], x["referencing_object"]),
+                                      f"References {target}. Either a database that lives elsewhere (check it is moved too) or an XML method call that the "
+                                      "dependency view lists as a database reference.", DOC_AZURE_DIFF))
         for s in db["synonyms"]:
             parts = re.sub(r"[\[\]]", "", s["base_object_name"] or "").split(".")
             if len(parts) >= 4:
