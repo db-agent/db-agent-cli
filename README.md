@@ -38,7 +38,7 @@ a report you can hand to a manager or a client. It is the first step of an **SSR
 ## 5-minute demo (no database needed)
 
 ```bash
-git clone https://github.com/db-agent/dbagent-cli && cd dbagent-cli
+git clone https://github.com/db-agent/db-agent-cli && cd db-agent-cli
 python3 -m venv .venv && .venv/bin/pip install -e .
 make demo-files
 ```
