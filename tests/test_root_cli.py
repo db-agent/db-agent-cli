@@ -10,7 +10,7 @@ runner = CliRunner()
 def test_engines_lists_available_and_planned():
     out = runner.invoke(app, ["engines"]).output
     assert "sqlserver" in out and "available" in out
-    for name in ("postgres", "mysql", "databricks"):
+    for name in ("postgres", "mysql"):
         assert name in out and "planned" in out
 
 

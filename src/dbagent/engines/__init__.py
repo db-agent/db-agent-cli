@@ -31,5 +31,6 @@ ENGINES: tuple[Engine, ...] = (
            "available", "dbagent.engines.sqlserver.cli"),
     Engine("postgres", "PostgreSQL", "Not implemented yet.", "planned"),
     Engine("mysql", "MySQL", "Not implemented yet.", "planned"),
-    Engine("databricks", "Databricks", "Not implemented yet.", "planned"),
+    Engine("databricks", "Databricks", "Workspace health: runtimes, legacy dependencies, DBU spend, spend waste.",
+           "available", "dbagent.engines.databricks.cli"),
 )

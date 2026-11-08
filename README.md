@@ -8,7 +8,8 @@ db-agent engines          # what is implemented and what is planned
 | Engine | Status | Verbs |
 |---|---|---|
 | `sqlserver` | available | `inventory`, `ssrs`, `validate`, `report` |
-| `postgres`, `mysql`, `databricks` | **planned, not implemented** | none yet |
+| `databricks` | available; live-tested on one small AWS workspace only, see the docs | `health` ([docs](docs/databricks-health.md)) |
+| `postgres`, `mysql` | **planned, not implemented** | none yet |
 
 The rest of this page covers the `sqlserver` engine. How to add another: [docs/adding-an-engine.md](docs/adding-an-engine.md).
 
