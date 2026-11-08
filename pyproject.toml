@@ -3,7 +3,7 @@ requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
-name = "db-agent"
+name = "db-agent-kit"
 version = "0.2.0"
 description = "Read-only DBA toolkit CLI: SQL Server 2016/2017 upgrade and SSRS to Power BI inventory, Databricks workspace health and DBU cost checks."
 readme = "README.md"

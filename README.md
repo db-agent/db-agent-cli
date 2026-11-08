@@ -41,7 +41,7 @@ a report you can hand to a manager or a client. It is the first step of an **SSR
 ## Install
 
 ```bash
-pip install db-agent        # after the first PyPI release
+pip install db-agent-kit      # after the first PyPI release
 ```
 
 From source (Python 3.11 or newer):

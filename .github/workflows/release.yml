@@ -1,6 +1,6 @@
 name: release
 # Publishes to PyPI with Trusted Publishing (OIDC): no API token is stored anywhere.
-# One-time setup on pypi.org: Your projects > Publishing > add a (pending) publisher with
+# One-time setup on pypi.org: Your projects > Publishing > add a (pending) publisher with project name db-agent-kit,
 #   owner/repo = db-agent/db-agent-cli, workflow = release.yml, environment = pypi
 # For the TestPyPI dry run, do the same on test.pypi.org with environment = testpypi.
 on:
@@ -39,7 +39,7 @@ jobs:
       - run: twine check --strict dist/*
       - name: Only db_agent is installed, and no keys or output files are shipped
         run: |
-          unzip -l dist/*.whl | awk '{print $4}' | grep -E '^[a-z_]+/' | cut -d/ -f1 | sort -u | grep -vE '^(db_agent|db_agent-.*\.dist-info)$' && { echo "unexpected top-level in wheel"; exit 1; } || true
+          unzip -l dist/*.whl | awk '{print $4}' | grep -E '^[a-z_]+/' | cut -d/ -f1 | sort -u | grep -vE '^(db_agent|db_agent_kit-.*\.dist-info)$' && { echo "unexpected top-level in wheel"; exit 1; } || true
           ! (unzip -l dist/*.whl; tar tzf dist/*.tar.gz) | grep -E '\.(pem|env|xlsx)$|(^|/)\.env|-output/'
       - name: Install the wheel in a clean venv and run it
         run: |
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: testpypi
-      url: https://test.pypi.org/p/db-agent
+      url: https://test.pypi.org/p/db-agent-kit
     permissions:
       id-token: write
     steps:
@@ -76,7 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/db-agent
+      url: https://pypi.org/p/db-agent-kit
     permissions:
       id-token: write
     steps:
