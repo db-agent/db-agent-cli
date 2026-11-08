@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "db-agent-sqlserver"
-version = "0.1.0"
-description = "Read-only CLI to inventory SQL Server and SSRS reports before a SQL Server 2016/2017 upgrade or a move to Power BI."
+name = "db-agent"
+version = "0.2.0"
+description = "db-agent: read-only DBA toolkit. One CLI, one verb set per database engine. Today: SQL Server and SSRS inventory and migration risk."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -25,10 +25,12 @@ odbc = ["pyodbc>=5"]
 dev = ["pytest>=8"]
 
 [project.scripts]
-db-agent-sqlserver = "dbagent_sqlserver.cli:app"
+db-agent = "dbagent.cli:app"
+# kept so existing scripts keep working
+db-agent-sqlserver = "dbagent.engines.sqlserver.cli:app"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/dbagent_sqlserver"]
+packages = ["src/dbagent"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

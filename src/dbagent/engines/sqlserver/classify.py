@@ -13,7 +13,7 @@ from .usage import ReportUsage, UsageData
 
 
 def load_config(path: Path | None = None) -> dict[str, Any]:
-    default = yaml.safe_load(resources.files("dbagent_sqlserver").joinpath("data/classification.yaml").read_text())
+    default = yaml.safe_load(resources.files("dbagent.engines.sqlserver").joinpath("data/classification.yaml").read_text())
     if path:
         user = yaml.safe_load(Path(path).read_text()) or {}
         review = {**default.get("review_if", {}), **user.get("review_if", {})}

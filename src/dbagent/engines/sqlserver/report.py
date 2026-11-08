@@ -96,7 +96,7 @@ def _next_steps(s: dict[str, Any]) -> list[str]:
 
 def write_report(out: Path, today: date | None = None) -> list[str]:
     s = build_summary(out, today)
-    tpl = resources.files("dbagent_sqlserver").joinpath("templates/summary.html.j2").read_text(encoding="utf-8")
+    tpl = resources.files("dbagent.engines.sqlserver").joinpath("templates/summary.html.j2").read_text(encoding="utf-8")
     env = Environment(autoescape=select_autoescape(default=True, default_for_string=True))
     (out / "summary.html").write_text(env.from_string(tpl).render(s=s), encoding="utf-8")
     rows: list[dict[str, Any]] = [{"item": "Generated", "value": s["generated"]}]

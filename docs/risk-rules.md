@@ -37,7 +37,7 @@ MD2/MD4/MD5/SHA/SHA1 in `HASHBYTES`, `XMLDATA`, deprecated catalog and SQL Trace
 compatibility views (`sysobjects`, `syscolumns` and the rest of Microsoft's list), `IDENTITYCOL`,
 `ROWGUIDCOL`, `CREATE DEFAULT/RULE`, `SQLOLEDB`, and about sixty deprecated system stored procedures
 (`sp_addlogin`, `sp_adduser`, `sp_password`, `sp_depends`, `sp_dbcmptlevel`, `sp_attach_db`, `sp_lock`,
-the SQL Trace procedures, and others). The exact list is in `src/dbagent_sqlserver/rules.py`.
+the SQL Trace procedures, and others). The exact list is in `src/dbagent/engines/sqlserver/rules.py`.
 
 ### Limits
 

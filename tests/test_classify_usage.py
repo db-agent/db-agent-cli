@@ -1,7 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 
-from dbagent_sqlserver import classify, ssrs, usage
+from dbagent.engines.sqlserver import classify, ssrs, usage
 
 CFG = classify.load_config()
 

@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from dbagent_sqlserver import outputs, report as report_mod, risks as R
-from dbagent_sqlserver.cli import app, parse_conn_spec
+from dbagent.engines.sqlserver import outputs, report as report_mod, risks as R
+from dbagent.engines.sqlserver.cli import app, parse_conn_spec
 
 runner = CliRunner()
 
@@ -97,12 +97,12 @@ def test_modules_json_is_written_only_when_asked(fake_inventory, tmp_path):
 
 
 def test_cli_entry_point_runs_as_module():
-    out = subprocess.run([sys.executable, "-m", "dbagent_sqlserver.cli", "--help"], capture_output=True, text=True)
+    out = subprocess.run([sys.executable, "-m", "dbagent.engines.sqlserver.cli", "--help"], capture_output=True, text=True)
     assert out.returncode == 0 and "inventory" in out.stdout and "validate" in out.stdout
 
 
 def test_odbc_driver_choice_prefers_newest_installed(monkeypatch):
-    from dbagent_sqlserver.db import DatabaseError, odbc_driver_name
+    from dbagent.engines.sqlserver.db import DatabaseError, odbc_driver_name
     monkeypatch.delenv("DBAGENT_ODBC_DRIVER", raising=False)
     assert odbc_driver_name(["SQL Server", "ODBC Driver 13 for SQL Server", "ODBC Driver 17 for SQL Server"]) == "ODBC Driver 17 for SQL Server"
     assert odbc_driver_name(["ODBC Driver 17 for SQL Server", "ODBC Driver 18 for SQL Server"]) == "ODBC Driver 18 for SQL Server"

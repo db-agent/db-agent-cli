@@ -2,7 +2,7 @@
 import re
 from pathlib import Path
 
-SRC = Path(__file__).resolve().parents[1] / "src" / "dbagent_sqlserver"
+SRC = Path(__file__).resolve().parents[1] / "src" / "dbagent" / "engines" / "sqlserver"
 
 
 def test_only_db_module_imports_a_driver():

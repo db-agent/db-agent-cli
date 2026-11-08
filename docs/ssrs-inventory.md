@@ -1,6 +1,6 @@
 # SSRS inventory
 
-`db-agent-sqlserver ssrs` lists every SSRS report, says what each one uses, and classifies it as
+`db-agent sqlserver ssrs` lists every SSRS report, says what each one uses, and classifies it as
 **move**, **review** or **retire** before you move to Power BI.
 
 ## What it reads
@@ -25,7 +25,7 @@ Optional extras:
 - `--data-database SalesDb` to list the tables behind stored procedures a report calls
   (uses `sys.sql_expression_dependencies`, one level deep).
 - `--config rules.yaml` to change the classification rules. The defaults are in
-  `src/dbagent_sqlserver/data/classification.yaml`.
+  `src/dbagent/engines/sqlserver/data/classification.yaml`.
 - `--as-of 2026-11-01` to count the 90 and 365 day windows from a date other than today.
 
 It reads RDL versions 2005, 2008, 2010 and 2016 (namespaces are matched by element name).

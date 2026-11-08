@@ -152,7 +152,7 @@ def ssrs(
     rdl_folder: Annotated[Optional[Path], typer.Option("--rdl-folder", help="Folder with .rdl (and .rsd, .rds) files.")] = None,
     usage_csv: Annotated[Optional[Path], typer.Option("--usage-csv", help="Execution log exported to CSV (ExecutionLog3 columns).")] = None,
     subscriptions_csv: Annotated[Optional[Path], typer.Option("--subscriptions-csv", help="Folder mode: subscriptions (ItemPath, DeliveryExtension, DataDriven).")] = None,
-    config: Annotated[Optional[Path], typer.Option("--config", help="Classification rules YAML (see src/dbagent_sqlserver/data/classification.yaml).")] = None,
+    config: Annotated[Optional[Path], typer.Option("--config", help="Classification rules YAML (see src/dbagent/engines/sqlserver/data/classification.yaml).")] = None,
     as_of: Annotated[Optional[str], typer.Option("--as-of", help="Count 90 and 365 days back from this date (YYYY-MM-DD). Default today.")] = None,
     data_database: Annotated[Optional[str], typer.Option("--data-database", help="Database the reports query. Used to list the tables behind stored procedures.")] = None,
 ) -> None:

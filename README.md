@@ -1,4 +1,18 @@
-# db-agent SQL Server Kit: inventory SQL Server and SSRS reports before you upgrade or move to Power BI
+# db-agent CLI: a read-only DBA toolkit, one command group per database engine
+
+```
+db-agent <engine> <verb>
+db-agent engines          # what is implemented and what is planned
+```
+
+| Engine | Status | Verbs |
+|---|---|---|
+| `sqlserver` | available | `inventory`, `ssrs`, `validate`, `report` |
+| `postgres`, `mysql`, `databricks` | **planned, not implemented** | none yet |
+
+The rest of this page covers the `sqlserver` engine. How to add another: [docs/adding-an-engine.md](docs/adding-an-engine.md).
+
+## db-agent sqlserver: inventory SQL Server and SSRS reports before you upgrade or move to Power BI
 
 SQL Server 2016 reached end of support on July 14, 2026. SQL Server 2017 follows on October 12, 2027.
 If you run SSRS (SQL Server Reporting Services) on either, you have two jobs: upgrade the database
@@ -15,15 +29,15 @@ a report you can hand to a manager or a client. It is the first step of an **SSR
 
 | Command | What you get |
 |---|---|
-| `inventory` | Version, edition, databases, tables, row counts (from metadata), views, procedures with code, linked servers, Agent jobs. **Upgrade risks**, each with a link to the Microsoft page it comes from. |
-| `ssrs` | Every report: data sources, datasets, tables and procedures used, parameters, subreports, custom code, subscriptions, usage. Each report is **move**, **review** or **retire** with the reason. |
-| `validate` | Runs each "move" report's queries on the old and new server and compares row counts and totals. |
-| `report` | One printable `summary.html` and one Excel workbook with all of it. |
+| `sqlserver inventory` | Version, edition, databases, tables, row counts (from metadata), views, procedures with code, linked servers, Agent jobs. **Upgrade risks**, each with a link to the Microsoft page it comes from. |
+| `sqlserver ssrs` | Every report: data sources, datasets, tables and procedures used, parameters, subreports, custom code, subscriptions, usage. Each report is **move**, **review** or **retire** with the reason. |
+| `sqlserver validate` | Runs each "move" report's queries on the old and new server and compares row counts and totals. |
+| `sqlserver report` | One printable `summary.html` and one Excel workbook with all of it. |
 
 ## 5-minute demo (no database needed)
 
 ```bash
-git clone https://github.com/db-agent/db-agent-sqlserver && cd db-agent-sqlserver
+git clone https://github.com/db-agent/dbagent-cli && cd dbagent-cli
 python3 -m venv .venv && .venv/bin/pip install -e .
 make demo-files
 ```
@@ -39,15 +53,14 @@ sample database and run `make demo`. See [docs/demo.md](docs/demo.md).
 Today: from source, as above (Python 3.11 or newer). PyPI, a Docker image and a Windows single-file
 `.exe` are planned and **not built yet**.
 
-Run it as `db-agent-sqlserver <command>`. (The `db-agent sqlserver ...` form needs a change in the main
-db-agent command that has not been made.)
+Run it as `db-agent sqlserver <command>`. The old `db-agent-sqlserver <command>` still works.
 
 ```bash
-db-agent-sqlserver inventory --server sql01 --user dbagent_reader          # password: env DBAGENT_SQL_PASSWORD or a prompt
-db-agent-sqlserver ssrs --reportserver-db ReportServer --server sql01 --user dbagent_reader
-db-agent-sqlserver ssrs --rdl-folder ./reports --usage-csv executionlog.csv       # no server access needed
-db-agent-sqlserver validate --source "server=old,database=Sales,user=u" --target "server=new,database=Sales,user=u" --reports dbagent-sqlserver-output/reports.csv
-db-agent-sqlserver report
+db-agent sqlserver inventory --server sql01 --user dbagent_reader          # password: env DBAGENT_SQL_PASSWORD or a prompt
+db-agent sqlserver ssrs --reportserver-db ReportServer --server sql01 --user dbagent_reader
+db-agent sqlserver ssrs --rdl-folder ./reports --usage-csv executionlog.csv       # no server access needed
+db-agent sqlserver validate --source "server=old,database=Sales,user=u" --target "server=new,database=Sales,user=u" --reports dbagent-sqlserver-output/reports.csv
+db-agent sqlserver report
 ```
 
 Output goes to `./dbagent-sqlserver-output` (change with `--out`). Windows authentication and Microsoft

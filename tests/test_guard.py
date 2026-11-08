@@ -1,6 +1,6 @@
 import pytest
 
-from dbagent_sqlserver.guard import GuardError, QueryGuard, sanitize
+from dbagent.engines.sqlserver.guard import GuardError, QueryGuard, sanitize
 
 ALLOWED = [
     "SELECT 1",

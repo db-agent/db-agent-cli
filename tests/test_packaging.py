@@ -10,5 +10,5 @@ import pytest
 def test_wheel_contains_package_data(tmp_path):
     subprocess.run([sys.executable, "-m", "pip", "wheel", ".", "--no-deps", "--no-build-isolation", "-w", str(tmp_path), "-q"], check=True)
     names = zipfile.ZipFile(next(tmp_path.glob("*.whl"))).namelist()
-    assert "dbagent_sqlserver/data/classification.yaml" in names
-    assert "dbagent_sqlserver/templates/summary.html.j2" in names
+    assert "dbagent/engines/sqlserver/data/classification.yaml" in names
+    assert "dbagent/engines/sqlserver/templates/summary.html.j2" in names
