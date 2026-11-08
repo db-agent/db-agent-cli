@@ -1,4 +1,8 @@
-# db-agent CLI: a read-only DBA toolkit, one command group per database engine
+# db-agent CLI: read-only DBA toolkit for SQL Server, SSRS and Databricks
+
+Check a database before you upgrade, migrate or pay for another year of it. db-agent reads metadata only and writes a report you can hand to a manager: SQL Server 2016/2017 upgrade risks, an SSRS to Power BI report inventory, and Databricks workspace health with DBU spend. One command per engine. Nothing is changed on any server.
+
+Looking for the text-to-SQL agent? See [db-agent/db-agent](https://github.com/db-agent/db-agent).
 
 ```
 db-agent <engine> <verb>
@@ -9,9 +13,8 @@ db-agent engines          # what is implemented and what is planned
 |---|---|---|
 | `sqlserver` | available | `inventory`, `ssrs`, `validate`, `report` |
 | `databricks` | available; live-tested on one small AWS workspace only, see the docs | `health` ([docs](https://github.com/db-agent/db-agent-cli/blob/main/docs/databricks-health.md)) |
-| `pg`| AWS Fleet Scan | `feel`  |
 
-The rest of this page covers the `sqlserver` engine. How to add another: [docs/adding-an-engine.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/adding-an-engine.md).
+Each engine is described below. To add one, see [docs/adding-an-engine.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/adding-an-engine.md).
 
 ## db-agent sqlserver: inventory SQL Server and SSRS reports before you upgrade or move to Power BI
 
@@ -35,11 +38,26 @@ a report you can hand to a manager or a client. It is the first step of an **SSR
 | `sqlserver validate` | Runs each "move" report's queries on the old and new server and compares row counts and totals. |
 | `sqlserver report` | One printable `summary.html` and one Excel workbook with all of it. |
 
-## 5-minute demo (no database needed)
+## Install
+
+```bash
+pip install db-agent        # after the first PyPI release
+```
+
+From source (Python 3.11 or newer):
 
 ```bash
 git clone https://github.com/db-agent/db-agent-cli && cd db-agent-cli
 python3 -m venv .venv && .venv/bin/pip install -e .
+```
+
+A Docker image and a Windows single-file `.exe` do not exist yet.
+
+## 5-minute demo (no database needed)
+
+Run this from the source checkout (see Install):
+
+```bash
 make demo-files
 ```
 
@@ -49,9 +67,7 @@ opens `summary.html`. You will see 5 move, 5 review and 2 retire, each with a re
 To also see `inventory` and `validate`, start two SQL Server containers, restore the AdventureWorks
 sample database and run `make demo`. See [docs/demo.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/demo.md).
 
-## Install
-
-From source, as above (Python 3.11 or newer). A Docker image and a Windows single-file `.exe` do not exist yet.
+## Use it
 
 Run it as `db-agent sqlserver <command>`. The old `db-agent-sqlserver <command>` still works.
 
@@ -104,6 +120,24 @@ The exact T-SQL script is in [docs/permissions.md](https://github.com/db-agent/d
 **Why are no reports marked retire?** SSRS keeps its usage log for 60 days by default. A report that runs once a year looks unused in a 60-day log. The kit only calls a report retire when the log covers 365 days, and says so. See [docs/ssrs-inventory.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/ssrs-inventory.md).
 
 **Where does my data go?** Nowhere. Everything is written to a local folder. Object code (`modules.json`) can contain secrets: skip it with `--no-code`.
+
+## db-agent databricks: workspace health and DBU spend
+
+```bash
+databricks auth login --host https://<workspace>.cloud.databricks.com
+db-agent databricks health                       # uses a SQL warehouse that is already running
+db-agent databricks health --profile <name> --warehouse-id <id> --out ./out
+db-agent databricks health --no-sql              # REST API checks only, no warehouse needed
+```
+
+It reads the REST API and system tables and changes nothing. It checks:
+
+- Clusters and job clusters on runtimes past end of support, or within 180 days of it (`--eos-warning-days`). In the built-in table, 13.3 LTS ended on 2026-08-22 and 14.3 LTS ends on 2027-02-01.
+- Legacy dependencies: Hive metastore tables, DBFS mount events, init scripts stored on DBFS, and clusters without a Unity Catalog access mode.
+- DBU spend by month at list price, split into usage and price change, with a note when the SKU tier changes.
+- Spend waste: scheduled jobs on all-purpose clusters, clusters with auto-termination off, SQL warehouses billed with no queries or with auto-stop off, and spend with no tags.
+
+Live-tested on one small AWS workspace only. See [docs/databricks-health.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/databricks-health.md) for options, access needed and limits.
 
 ## Status
 
