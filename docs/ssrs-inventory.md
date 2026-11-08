@@ -25,7 +25,7 @@ Optional extras:
 - `--data-database SalesDb` to list the tables behind stored procedures a report calls
   (uses `sys.sql_expression_dependencies`, one level deep).
 - `--config rules.yaml` to change the classification rules. The defaults are in
-  `src/dbagent/engines/sqlserver/data/classification.yaml`.
+  `src/db_agent/engines/sqlserver/data/classification.yaml`.
 - `--as-of 2026-11-01` to count the 90 and 365 day windows from a date other than today.
 
 It reads RDL versions 2005, 2008, 2010 and 2016 (namespaces are matched by element name).
@@ -87,7 +87,7 @@ gauges, maps or show/hide toggles are more likely to need an interactive rebuild
 | `reports.csv` | One row per report |
 | `reports.json` | Everything, including dataset SQL (read by `validate`) |
 | `report-details/*.md` | One file per report: SQL, parameters, data sources, reasons |
-| `dbagent-sqlserver.xlsx` | Reports tab (and the others when you run `report`) |
+| `db-agent-sqlserver.xlsx` | Reports tab (and the others when you run `report`) |
 | `summary.html` | Printable summary |
 
 ## Not verified against a real SSRS server

@@ -1,5 +1,5 @@
-from dbagent.engines.sqlserver import risks as R
-from dbagent.engines.sqlserver.rules import scan_code
+from db_agent.engines.sqlserver import risks as R
+from db_agent.engines.sqlserver.rules import scan_code
 
 
 def ids(rs, **kw):

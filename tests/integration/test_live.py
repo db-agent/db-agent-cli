@@ -7,9 +7,9 @@ from pathlib import Path
 import pymssql
 import pytest
 
-from dbagent.engines.sqlserver import classify, inventory, outputs, risks as R, ssrs as ssrs_mod, usage as usage_mod, validate as V
-from dbagent.engines.sqlserver.db import DatabaseError, SafeConnection
-from dbagent.engines.sqlserver.guard import GuardError, QueryGuard
+from db_agent.engines.sqlserver import classify, inventory, outputs, risks as R, ssrs as ssrs_mod, usage as usage_mod, validate as V
+from db_agent.engines.sqlserver.db import DatabaseError, SafeConnection
+from db_agent.engines.sqlserver.guard import GuardError, QueryGuard
 
 from .conftest import HOST, PASSWORD, SRC_PORT, TGT_PORT, cfg
 

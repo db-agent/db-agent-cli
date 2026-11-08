@@ -1,4 +1,4 @@
-"""Command line: db-agent-sqlserver <inventory|ssrs|validate|report|version>."""
+"""Command line: db-agent sqlserver <inventory|ssrs|validate|report|version>."""
 
 from __future__ import annotations
 
@@ -117,7 +117,7 @@ def _done(written: list[str], out: Path) -> None:
 def inventory(
     server: Server = None, port: Port = 1433, database: Database = None, user: User = None, driver: Driver = "pymssql",
     trusted: Trusted = False, encrypt: Encrypt = True, trust_server_certificate: TrustCert = False,
-    out: Out = Path("dbagent-sqlserver-output"), format: Format = "md,json,xlsx,html",
+    out: Out = Path("db-agent-sqlserver-output"), format: Format = "md,json,xlsx,html",
     databases: Annotated[Optional[str], typer.Option("--databases", help="Comma list of databases to read. Default: all user databases.")] = None,
     include_system: Annotated[bool, typer.Option("--include-system", help="Also read master, model, msdb, tempdb.")] = False,
     target: Annotated[int, typer.Option("--target", help="Upgrade target: 2019 or 2022.")] = 2022,
@@ -147,12 +147,12 @@ def inventory(
 def ssrs(
     server: Server = None, port: Port = 1433, database: Database = None, user: User = None, driver: Driver = "pymssql",
     trusted: Trusted = False, encrypt: Encrypt = True, trust_server_certificate: TrustCert = False,
-    out: Out = Path("dbagent-sqlserver-output"), format: Format = "md,json,xlsx,html",
+    out: Out = Path("db-agent-sqlserver-output"), format: Format = "md,json,xlsx,html",
     reportserver_db: Annotated[Optional[str], typer.Option("--reportserver-db", help="Name of the ReportServer database on --server.")] = None,
     rdl_folder: Annotated[Optional[Path], typer.Option("--rdl-folder", help="Folder with .rdl (and .rsd, .rds) files.")] = None,
     usage_csv: Annotated[Optional[Path], typer.Option("--usage-csv", help="Execution log exported to CSV (ExecutionLog3 columns).")] = None,
     subscriptions_csv: Annotated[Optional[Path], typer.Option("--subscriptions-csv", help="Folder mode: subscriptions (ItemPath, DeliveryExtension, DataDriven).")] = None,
-    config: Annotated[Optional[Path], typer.Option("--config", help="Classification rules YAML (see src/dbagent/engines/sqlserver/data/classification.yaml).")] = None,
+    config: Annotated[Optional[Path], typer.Option("--config", help="Classification rules YAML (see src/db_agent/engines/sqlserver/data/classification.yaml).")] = None,
     as_of: Annotated[Optional[str], typer.Option("--as-of", help="Count 90 and 365 days back from this date (YYYY-MM-DD). Default today.")] = None,
     data_database: Annotated[Optional[str], typer.Option("--data-database", help="Database the reports query. Used to list the tables behind stored procedures.")] = None,
 ) -> None:
@@ -214,7 +214,7 @@ def validate(
     allow_exec: Annotated[bool, typer.Option("--allow-exec", help="Also run datasets that call stored procedures.")] = False,
     timeout: Annotated[int, typer.Option("--timeout", help="Seconds per query.")] = 60,
     max_rows: Annotated[int, typer.Option("--max-rows", help="Skip a dataset that returns more rows than this.")] = 1_000_000,
-    out: Out = Path("dbagent-sqlserver-output"), format: Format = "md,json,xlsx,html",
+    out: Out = Path("db-agent-sqlserver-output"), format: Format = "md,json,xlsx,html",
 ) -> None:
     """Run each 'move' report's queries on the old and new server and compare counts and totals."""
     fmts = _formats(format)
@@ -246,7 +246,7 @@ def validate(
 
 @app.command()
 @_guarded
-def report(out: Out = Path("dbagent-sqlserver-output")) -> None:
+def report(out: Out = Path("db-agent-sqlserver-output")) -> None:
     """Combine inventory, ssrs and validate outputs found in --out into summary.html and the workbook."""
     if not out.is_dir() or not any((out / f).exists() for f in ("inventory.json", "reports.json", "validation.json")):
         raise FileNotFoundError(f"nothing to report in {out}. Run inventory, ssrs or validate first.")
@@ -255,8 +255,8 @@ def report(out: Out = Path("dbagent-sqlserver-output")) -> None:
 
 @app.command()
 def version() -> None:
-    """Print the kit version and the SQL Server versions it supports."""
-    typer.echo(f"db-agent SQL Server Kit {__version__}")
+    """Print the version and the SQL Server versions it supports."""
+    typer.echo(f"db-agent {__version__}")
     typer.echo(f"Supported: {SUPPORTED_SQL_SERVER}")
     typer.echo("Python " + sys.version.split()[0])
 

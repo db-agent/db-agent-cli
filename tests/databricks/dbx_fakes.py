@@ -1,5 +1,5 @@
 """A fake workspace. SQL is routed by the marker comment each query starts with."""
-from dbagent.engines.databricks.client import DatabricksError
+from db_agent.engines.databricks.client import DatabricksError
 
 CLUSTERS = [
     {"cluster_id": "c-old", "cluster_name": "legacy-etl", "spark_version": "13.3.x-scala2.12", "cluster_source": "UI",

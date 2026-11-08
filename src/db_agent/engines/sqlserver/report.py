@@ -14,7 +14,7 @@ from jinja2 import Environment, select_autoescape
 from . import __version__
 from .outputs import eos_info, order_workbook, update_sheet
 
-FOOTER = "Generated with db-agent SQL Server Kit. Need the upgrade and report move done for you at a fixed price? becloudready.com/sql-server"
+FOOTER = "Generated with db-agent. Need the upgrade and report move done for you at a fixed price? becloudready.com/sql-server"
 
 
 def _load(path: Path) -> Any:
@@ -96,7 +96,7 @@ def _next_steps(s: dict[str, Any]) -> list[str]:
 
 def write_report(out: Path, today: date | None = None) -> list[str]:
     s = build_summary(out, today)
-    tpl = resources.files("dbagent.engines.sqlserver").joinpath("templates/summary.html.j2").read_text(encoding="utf-8")
+    tpl = resources.files("db_agent.engines.sqlserver").joinpath("templates/summary.html.j2").read_text(encoding="utf-8")
     env = Environment(autoescape=select_autoescape(default=True, default_for_string=True))
     (out / "summary.html").write_text(env.from_string(tpl).render(s=s), encoding="utf-8")
     rows: list[dict[str, Any]] = [{"item": "Generated", "value": s["generated"]}]
@@ -117,4 +117,4 @@ def write_report(out: Path, today: date | None = None) -> list[str]:
     rows += [{"item": "", "value": ""}, {"item": "", "value": FOOTER}]
     update_sheet(out, "Summary", rows, ["item", "value"])
     order_workbook(out)
-    return ["summary.html", "dbagent-sqlserver.xlsx (Summary)"]
+    return ["summary.html", "db-agent-sqlserver.xlsx (Summary)"]

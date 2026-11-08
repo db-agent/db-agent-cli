@@ -69,17 +69,17 @@ sample database and run `make demo`. See [docs/demo.md](https://github.com/db-ag
 
 ## Use it
 
-Run it as `db-agent sqlserver <command>`. The old `db-agent-sqlserver <command>` still works.
+Run it as `db-agent sqlserver <command>`.
 
 ```bash
 db-agent sqlserver inventory --server sql01 --user dbagent_reader          # password: env DBAGENT_SQL_PASSWORD or a prompt
 db-agent sqlserver ssrs --reportserver-db ReportServer --server sql01 --user dbagent_reader
 db-agent sqlserver ssrs --rdl-folder ./reports --usage-csv executionlog.csv       # no server access needed
-db-agent sqlserver validate --source "server=old,database=Sales,user=u" --target "server=new,database=Sales,user=u" --reports dbagent-sqlserver-output/reports.csv
+db-agent sqlserver validate --source "server=old,database=Sales,user=u" --target "server=new,database=Sales,user=u" --reports db-agent-sqlserver-output/reports.csv
 db-agent sqlserver report
 ```
 
-Output goes to `./dbagent-sqlserver-output` (change with `--out`). Windows authentication needs `--driver odbc`,
+Output goes to `./db-agent-sqlserver-output` (change with `--out`). Windows authentication needs `--driver odbc`,
 `pip install ".[odbc]"` and a Microsoft ODBC driver for SQL Server. The tool finds driver 18, 17 or 13 on its own; set
 `DBAGENT_ODBC_DRIVER` to force one. It was tested with driver 17 and a local Windows account (NTLM). Domain (Kerberos)
 logins and Microsoft Entra ID were not tested.

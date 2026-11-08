@@ -53,12 +53,10 @@ odbc = ["pyodbc>=5"]
 dev = ["pytest>=8"]
 
 [project.scripts]
-db-agent = "dbagent.cli:app"
-# kept so existing scripts keep working
-db-agent-sqlserver = "dbagent.engines.sqlserver.cli:app"
+db-agent = "db_agent.cli:app"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/dbagent"]
+packages = ["src/db_agent"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

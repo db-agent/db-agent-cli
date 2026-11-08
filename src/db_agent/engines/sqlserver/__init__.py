@@ -1,6 +1,6 @@
-"""db-agent SQL Server Kit: read-only inventory of SQL Server and SSRS reports."""
+"""db-agent: read-only inventory of SQL Server and SSRS reports."""
 
-from dbagent import __version__  # noqa: F401  (one version for the whole CLI)
+from db_agent import __version__  # noqa: F401  (one version for the whole CLI)
 
 SUPPORTED_SQL_SERVER = "SQL Server 2016 to 2022 (read), Azure SQL Database and Managed Instance (read)"
 

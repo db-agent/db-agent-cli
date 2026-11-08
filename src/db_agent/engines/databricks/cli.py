@@ -29,7 +29,7 @@ def health(
     cost_to: Annotated[Optional[str], typer.Option("--cost-to", help="Last month, YYYY-MM. Default: the current month.")] = None,
     eos_warning_days: Annotated[int, typer.Option("--eos-warning-days", help="Flag runtimes that end support within this many days.")] = 180,
     all_workspaces: Annotated[bool, typer.Option("--all-workspaces", help="Include every workspace in the account in billing queries.")] = False,
-    out: Annotated[Path, typer.Option("--out", help="Output folder.")] = Path("dbagent-databricks-output"),
+    out: Annotated[Path, typer.Option("--out", help="Output folder.")] = Path("db-agent-databricks-output"),
     format: Annotated[str, typer.Option("--format", help="Comma list of: md, json.")] = "md,json",
 ) -> None:
     """Workspace health: runtimes, legacy dependencies, DBU spend over time, spend waste."""

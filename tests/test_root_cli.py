@@ -1,8 +1,8 @@
 from typer.testing import CliRunner
 
-from dbagent import __version__
-from dbagent.cli import app
-from dbagent.engines import ENGINES
+from db_agent import __version__
+from db_agent.cli import app
+from db_agent.engines import ENGINES
 
 runner = CliRunner()
 
@@ -30,5 +30,5 @@ def test_only_available_engines_have_a_module():
 
 
 def test_single_version():
-    import dbagent.engines.sqlserver as s
+    import db_agent.engines.sqlserver as s
     assert s.__version__ == __version__

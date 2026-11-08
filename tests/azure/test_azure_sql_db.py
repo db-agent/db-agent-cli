@@ -7,9 +7,9 @@ import os
 
 import pytest
 
-from dbagent.engines.sqlserver.db import ConnectionConfig
-from dbagent.engines.sqlserver.inventory import collect
-from dbagent.engines.sqlserver.risks import assess
+from db_agent.engines.sqlserver.db import ConnectionConfig
+from db_agent.engines.sqlserver.inventory import collect
+from db_agent.engines.sqlserver.risks import assess
 
 HOST = os.environ.get("DBAGENT_TEST_AZURE_SERVER")
 pytestmark = pytest.mark.skipif(not HOST, reason="set DBAGENT_TEST_AZURE_* to run")

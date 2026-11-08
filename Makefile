@@ -1,8 +1,8 @@
 # make demo-files   no database needed: reads the sample reports and the synthetic usage log
 # make demo         full demo: needs the containers (see README), runs all four commands
 PY ?= .venv/bin/python
-CLI = $(PY) -m dbagent.cli sqlserver
-OUT ?= dbagent-sqlserver-output
+CLI = $(PY) -m db_agent.cli sqlserver
+OUT ?= db-agent-sqlserver-output
 export DBAGENT_SQL_PASSWORD ?= DbAgent_Demo_2017!
 export DBAGENT_SOURCE_PASSWORD ?= DbAgent_Demo_2017!
 export DBAGENT_TARGET_PASSWORD ?= DbAgent_Demo_2017!

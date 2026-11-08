@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from dbagent.engines.sqlserver import rdl, sqlrefs
+from db_agent.engines.sqlserver import rdl, sqlrefs
 
 
 def parse(examples, rel):

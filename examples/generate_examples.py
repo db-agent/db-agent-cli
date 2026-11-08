@@ -233,7 +233,7 @@ def build_usage(short: bool = False, today: datetime | None = None) -> list[dict
 def write_usage(rows: list[dict], name: str) -> None:
     cols = ["ItemPath", "UserName", "RequestType", "TimeStart", "TimeEnd", "Status"]
     with open(HERE / name, "w", newline="", encoding="utf-8") as fh:
-        fh.write("# SAMPLE DATA: synthetic execution log made for the db-agent SQL Server Kit demo. Not from a real server.\n") if False else None
+        fh.write("# SAMPLE DATA: synthetic execution log made for the db-agent demo. Not from a real server.\n") if False else None
         w = csv.DictWriter(fh, fieldnames=cols)
         w.writeheader()
         w.writerows(rows)

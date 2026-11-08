@@ -7,11 +7,11 @@ import pytest
 from typer.testing import CliRunner
 
 import dbx_fakes
-from dbagent.cli import app
-from dbagent.engines.databricks import health, render
+from db_agent.cli import app
+from db_agent.engines.databricks import health, render
 
 TODAY = date(2026, 11, 7)
-SRC = Path(__file__).resolve().parents[2] / "src" / "dbagent" / "engines" / "databricks"
+SRC = Path(__file__).resolve().parents[2] / "src" / "db_agent" / "engines" / "databricks"
 runner = CliRunner()
 
 
@@ -60,7 +60,7 @@ def test_disabled_hive_metastore_is_a_finding_not_a_failure():
 def test_cost_text_is_readable_and_flags_a_thin_baseline():
     rows = [{"month": "2026-09-01", "sku_name": "PREMIUM_SQL", "dbus": "23", "cost": "7.4", "days": "5"},
             {"month": "2026-10-01", "sku_name": "PREMIUM_SQL", "dbus": "175", "cost": "73", "days": "27"}]
-    from dbagent.engines.databricks import cost as cost_mod
+    from db_agent.engines.databricks import cost as cost_mod
     d = health._cost_finding(cost_mod.analyze(rows, TODAY), "2026-09", "2026-10").detail
     assert "Weak baseline" in d and "$-" not in d and "$+" not in d and "(volume and SKU mix)" in d and "+$" in d
 
@@ -131,7 +131,7 @@ def test_no_http_libraries_and_no_token_option():
 
 # ---- CLI ---------------------------------------------------------------------------------------------
 def test_cli_end_to_end_with_a_fake_workspace(tmp_path, monkeypatch):
-    import dbagent.engines.databricks.client as client
+    import db_agent.engines.databricks.client as client
     monkeypatch.setattr(client, "connect", lambda *a, **k: dbx_fakes.FakeReader())
     res = runner.invoke(app, ["databricks", "health", "--out", str(tmp_path)])
     assert res.exit_code == 0, res.output
@@ -139,7 +139,7 @@ def test_cli_end_to_end_with_a_fake_workspace(tmp_path, monkeypatch):
 
 
 def test_cli_reports_a_connection_failure(monkeypatch):
-    import dbagent.engines.databricks.client as client
+    import db_agent.engines.databricks.client as client
     def boom(*a, **k): raise RuntimeError("token not found")
     monkeypatch.setattr(client, "connect", boom)
     res = runner.invoke(app, ["databricks", "health"])

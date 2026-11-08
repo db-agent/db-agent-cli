@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from typing import Callable
 
-from dbagent import __version__
+from db_agent import __version__
 
 from . import checks, cost as cost_mod, queries, runtimes
 from .model import Finding, Report

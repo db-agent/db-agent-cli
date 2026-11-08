@@ -4,9 +4,9 @@ import os
 
 import pytest
 
-from dbagent.engines.sqlserver.db import ConnectionConfig
-from dbagent.engines.sqlserver.inventory import collect
-from dbagent.engines.sqlserver.risks import assess
+from db_agent.engines.sqlserver.db import ConnectionConfig
+from db_agent.engines.sqlserver.inventory import collect
+from db_agent.engines.sqlserver.risks import assess
 
 pytestmark = pytest.mark.skipif(not os.environ.get("DBAGENT_SEED_SERVER"), reason="set DBAGENT_SEED_* to run")
 

@@ -90,7 +90,7 @@ class SafeConnection:
                     database=cfg.database or "",
                     login_timeout=cfg.login_timeout,
                     timeout=cfg.query_timeout,
-                    appname="db-agent-sqlserver",
+                    appname="db-agent",
                     read_only=True,  # ApplicationIntent=ReadOnly
                     autocommit=False,
                 )
@@ -103,7 +103,7 @@ class SafeConnection:
                     f"DRIVER={{{odbc_driver_name(pyodbc.drivers())}}}",
                     f"SERVER={cfg.server},{cfg.port}",
                     "ApplicationIntent=ReadOnly",
-                    "APP=db-agent-sqlserver",
+                    "APP=db-agent",
                     f"Encrypt={'yes' if cfg.encrypt else 'no'}",
                     f"TrustServerCertificate={'yes' if cfg.trust_server_certificate else 'no'}",
                 ]

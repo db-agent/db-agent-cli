@@ -8,7 +8,7 @@ import os
 import pymssql
 import pytest
 
-from dbagent.engines.sqlserver.db import ConnectionConfig
+from db_agent.engines.sqlserver.db import ConnectionConfig
 
 HOST = os.environ.get("DBAGENT_TEST_SERVER")
 PASSWORD = os.environ.get("DBAGENT_DEMO_SA_PASSWORD", "DbAgent_Demo_2017!")

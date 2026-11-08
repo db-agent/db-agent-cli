@@ -2,7 +2,7 @@ from decimal import Decimal
 
 import pytest
 
-from dbagent.engines.sqlserver import validate as V
+from db_agent.engines.sqlserver import validate as V
 
 
 def fold(rows, cols=("id", "amt")):

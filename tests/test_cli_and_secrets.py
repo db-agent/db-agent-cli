@@ -6,21 +6,21 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from dbagent.engines.sqlserver import outputs, report as report_mod, risks as R
-from dbagent.engines.sqlserver.cli import app, parse_conn_spec
+from db_agent.engines.sqlserver import outputs, report as report_mod, risks as R
+from db_agent.engines.sqlserver.cli import app, parse_conn_spec
 
 runner = CliRunner()
 
 
 def test_version():
     r = runner.invoke(app, ["version"])
-    assert r.exit_code == 0 and "SQL Server Kit" in r.output
+    assert r.exit_code == 0 and "db-agent" in r.output
 
 
 def test_ssrs_folder_mode_writes_every_output(examples, tmp_path):
     r = runner.invoke(app, ["ssrs", "--rdl-folder", str(examples / "rdl"), "--usage-csv", str(examples / "usage.csv"), "--out", str(tmp_path)])
     assert r.exit_code == 0, r.output
-    for f in ["reports.csv", "reports.json", "summary.md", "summary.html", "dbagent-sqlserver.xlsx"]:
+    for f in ["reports.csv", "reports.json", "summary.md", "summary.html", "db-agent-sqlserver.xlsx"]:
         assert (tmp_path / f).exists(), f
     assert len(list((tmp_path / "report-details").glob("*.md"))) == 12
     import csv
@@ -35,13 +35,13 @@ def test_ssrs_needs_exactly_one_source(tmp_path):
 def test_html_has_footer_and_the_required_sections(examples, tmp_path):
     runner.invoke(app, ["ssrs", "--rdl-folder", str(examples / "rdl"), "--usage-csv", str(examples / "usage.csv"), "--out", str(tmp_path)])
     html = (tmp_path / "summary.html").read_text()
-    assert "Generated with db-agent SQL Server Kit. Need the upgrade and report move done for you at a fixed price? becloudready.com/sql-server" in html
+    assert "Generated with db-agent. Need the upgrade and report move done for you at a fixed price? becloudready.com/sql-server" in html
     for needle in ["Top 20 reports by use", "Tables used most by reports", "Hard-to-move features", "move / review / retire"]:
         assert needle in html
     from openpyxl import load_workbook
-    wb = load_workbook(tmp_path / "dbagent-sqlserver.xlsx")
+    wb = load_workbook(tmp_path / "db-agent-sqlserver.xlsx")
     assert wb.sheetnames[0] == "Summary" and "Reports" in wb.sheetnames
-    assert any("db-agent SQL Server Kit" in str(c.value) for row in wb["Summary"].iter_rows() for c in row)
+    assert any("db-agent" in str(c.value) for row in wb["Summary"].iter_rows() for c in row)
 
 
 def test_report_command_needs_something_to_report(tmp_path):
@@ -97,12 +97,12 @@ def test_modules_json_is_written_only_when_asked(fake_inventory, tmp_path):
 
 
 def test_cli_entry_point_runs_as_module():
-    out = subprocess.run([sys.executable, "-m", "dbagent.engines.sqlserver.cli", "--help"], capture_output=True, text=True)
+    out = subprocess.run([sys.executable, "-m", "db_agent.engines.sqlserver.cli", "--help"], capture_output=True, text=True)
     assert out.returncode == 0 and "inventory" in out.stdout and "validate" in out.stdout
 
 
 def test_odbc_driver_choice_prefers_newest_installed(monkeypatch):
-    from dbagent.engines.sqlserver.db import DatabaseError, odbc_driver_name
+    from db_agent.engines.sqlserver.db import DatabaseError, odbc_driver_name
     monkeypatch.delenv("DBAGENT_ODBC_DRIVER", raising=False)
     assert odbc_driver_name(["SQL Server", "ODBC Driver 13 for SQL Server", "ODBC Driver 17 for SQL Server"]) == "ODBC Driver 17 for SQL Server"
     assert odbc_driver_name(["ODBC Driver 17 for SQL Server", "ODBC Driver 18 for SQL Server"]) == "ODBC Driver 18 for SQL Server"

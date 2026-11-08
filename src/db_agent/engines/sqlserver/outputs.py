@@ -17,7 +17,7 @@ from openpyxl.utils import get_column_letter
 from . import END_OF_SUPPORT
 from .inventory import major_version
 
-WORKBOOK = "dbagent-sqlserver.xlsx"
+WORKBOOK = "db-agent-sqlserver.xlsx"
 FORMATS = ("md", "json", "xlsx", "html")
 
 

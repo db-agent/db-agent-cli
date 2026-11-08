@@ -33,6 +33,6 @@ The demo password (`DbAgent_Demo_2017!`) is for these local containers only.
 - `inventory`: one database, about 70 tables, views, procedures, and a list of risks (full-text catalog, compatibility level, cross-database references and so on).
 - `ssrs`: 12 reports: 5 move, 5 review, 2 retire.
 - `validate`: 4 pass, 1 skipped (a multi-value parameter, with the reason).
-- `report`: `summary.html` and `dbagent-sqlserver.xlsx`.
+- `report`: `summary.html` and `db-agent-sqlserver.xlsx`.
 
 To see the "log too short" behaviour, run `ssrs` with `--usage-csv examples/usage_60days.csv`. No report is called retire.

@@ -2,7 +2,7 @@ from datetime import date
 
 import pytest
 
-from dbagent.engines.databricks import checks, cost, queries, runtimes, sqlguard
+from db_agent.engines.databricks import checks, cost, queries, runtimes, sqlguard
 
 TODAY = date(2026, 11, 7)
 
