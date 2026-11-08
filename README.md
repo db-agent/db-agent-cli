@@ -9,7 +9,7 @@ db-agent engines          # what is implemented and what is planned
 |---|---|---|
 | `sqlserver` | available | `inventory`, `ssrs`, `validate`, `report` |
 | `databricks` | available; live-tested on one small AWS workspace only, see the docs | `health` ([docs](docs/databricks-health.md)) |
-| `postgres`, `mysql` | **planned, not implemented** | none yet |
+| `pg`| AWS Fleet Scan | `feel`  |
 
 The rest of this page covers the `sqlserver` engine. How to add another: [docs/adding-an-engine.md](docs/adding-an-engine.md).
 
