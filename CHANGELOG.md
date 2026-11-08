@@ -23,7 +23,7 @@ First release.
 ### Changed
 
 - The project started as the single-engine `db-agent-sqlserver` package. It is now the `db_agent` package with engines under `db_agent.engines`. The `db-agent-sqlserver` command still works.
-- The repository is named `db-agent-cli`.
+- The repository is named `db-agent-kit`.
 
 ### Testing
 

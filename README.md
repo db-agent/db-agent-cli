@@ -12,9 +12,9 @@ db-agent engines          # what is implemented and what is planned
 | Engine | Status | Verbs |
 |---|---|---|
 | `sqlserver` | available | `inventory`, `ssrs`, `validate`, `report` |
-| `databricks` | available; live-tested on one small AWS workspace only, see the docs | `health` ([docs](https://github.com/db-agent/db-agent-cli/blob/main/docs/databricks-health.md)) |
+| `databricks` | available; live-tested on one small AWS workspace only, see the docs | `health` ([docs](https://github.com/db-agent/db-agent-kit/blob/main/docs/databricks-health.md)) |
 
-Each engine is described below. To add one, see [docs/adding-an-engine.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/adding-an-engine.md).
+Each engine is described below. To add one, see [docs/adding-an-engine.md](https://github.com/db-agent/db-agent-kit/blob/main/docs/adding-an-engine.md).
 
 ## db-agent sqlserver: inventory SQL Server and SSRS reports before you upgrade or move to Power BI
 
@@ -27,7 +27,7 @@ a report you can hand to a manager or a client. It is the first step of an **SSR
 
 *Part of the [db-agent](https://github.com/db-agent) project.* Apache-2.0.
 
-![Sample summary report](https://raw.githubusercontent.com/db-agent/db-agent-cli/main/docs/images/summary.png)
+![Sample summary report](https://raw.githubusercontent.com/db-agent/db-agent-kit/main/docs/images/summary.png)
 
 ## What it does
 
@@ -47,7 +47,7 @@ pip install db-agent-kit      # after the first PyPI release
 From source (Python 3.11 or newer):
 
 ```bash
-git clone https://github.com/db-agent/db-agent-cli && cd db-agent-cli
+git clone https://github.com/db-agent/db-agent-kit && cd db-agent-kit
 python3 -m venv .venv && .venv/bin/pip install -e .
 ```
 
@@ -65,7 +65,7 @@ This reads 12 sample reports and a synthetic usage log (`examples/`, clearly lab
 opens `summary.html`. You will see 5 move, 5 review and 2 retire, each with a reason.
 
 To also see `inventory` and `validate`, start two SQL Server containers, restore the AdventureWorks
-sample database and run `make demo`. See [docs/demo.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/demo.md).
+sample database and run `make demo`. See [docs/demo.md](https://github.com/db-agent/db-agent-kit/blob/main/docs/demo.md).
 
 ## Use it
 
@@ -87,7 +87,7 @@ logins and Microsoft Entra ID were not tested.
 ## What your DBA needs to grant
 
 A dedicated login with read access to metadata and the ReportServer catalog. Nothing that can write.
-The exact T-SQL script is in [docs/permissions.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/permissions.md).
+The exact T-SQL script is in [docs/permissions.md](https://github.com/db-agent/db-agent-kit/blob/main/docs/permissions.md).
 
 ## Sample output
 
@@ -109,7 +109,7 @@ The exact T-SQL script is in [docs/permissions.md](https://github.com/db-agent/d
 
 ## FAQ
 
-**Is it safe?** Every statement goes through one guard that allows a single `SELECT` (or, with `--allow-exec`, a stored procedure you named). `SELECT ... INTO`, `OPENROWSET`, linked servers and anything it cannot parse are refused. Tests check that no command can bypass it. The login's permissions are the real boundary: give it only what [docs/permissions.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/permissions.md) lists.
+**Is it safe?** Every statement goes through one guard that allows a single `SELECT` (or, with `--allow-exec`, a stored procedure you named). `SELECT ... INTO`, `OPENROWSET`, linked servers and anything it cannot parse are refused. Tests check that no command can bypass it. The login's permissions are the real boundary: give it only what [docs/permissions.md](https://github.com/db-agent/db-agent-kit/blob/main/docs/permissions.md) lists.
 
 **What access does it need?** See above. For `ssrs` without database access, export the `.rdl` files and the execution log and run it on a laptop.
 
@@ -117,7 +117,7 @@ The exact T-SQL script is in [docs/permissions.md](https://github.com/db-agent/d
 
 **What about Power BI paginated reports?** Reports are classified by what is hard to move, not converted. The hint column says which look paginated. Check Microsoft's current paginated report limits for your reports.
 
-**Why are no reports marked retire?** SSRS keeps its usage log for 60 days by default. A report that runs once a year looks unused in a 60-day log. The kit only calls a report retire when the log covers 365 days, and says so. See [docs/ssrs-inventory.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/ssrs-inventory.md).
+**Why are no reports marked retire?** SSRS keeps its usage log for 60 days by default. A report that runs once a year looks unused in a 60-day log. The kit only calls a report retire when the log covers 365 days, and says so. See [docs/ssrs-inventory.md](https://github.com/db-agent/db-agent-kit/blob/main/docs/ssrs-inventory.md).
 
 **Where does my data go?** Nowhere. Everything is written to a local folder. Object code (`modules.json`) can contain secrets: skip it with `--no-code`.
 
@@ -137,16 +137,16 @@ It reads the REST API and system tables and changes nothing. It checks:
 - DBU spend by month at list price, split into usage and price change, with a note when the SKU tier changes.
 - Spend waste: scheduled jobs on all-purpose clusters, clusters with auto-termination off, SQL warehouses billed with no queries or with auto-stop off, and spend with no tags.
 
-Live-tested on one small AWS workspace only. See [docs/databricks-health.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/databricks-health.md) for options, access needed and limits.
+Live-tested on one small AWS workspace only. See [docs/databricks-health.md](https://github.com/db-agent/db-agent-kit/blob/main/docs/databricks-health.md) for options, access needed and limits.
 
 ## Status
 
-Version 0.2.0. What was tested is listed in [docs/testing.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/testing.md):
+Version 0.2.0. What was tested is listed in [docs/testing.md](https://github.com/db-agent/db-agent-kit/blob/main/docs/testing.md):
 
 - `sqlserver`: real SQL Server 2017 and 2022 (Linux, Docker), real SQL Server 2016 SP3 with a real SSRS 2016 server (Windows VM), and `inventory` on one Azure SQL Database (AdventureWorksLT). ODBC with Windows authentication was tested with a local account.
-- `databricks`: one small AWS workspace. See [docs/databricks-health.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/databricks-health.md).
+- `databricks`: one small AWS workspace. See [docs/databricks-health.md](https://github.com/db-agent/db-agent-kit/blob/main/docs/databricks-health.md).
 - Not tested: SSRS 2017 and later, Power BI Report Server, domain (Kerberos) authentication, Entra ID, Azure SQL Managed Instance.
 
-[Upgrade risk rules](https://github.com/db-agent/db-agent-cli/blob/main/docs/risk-rules.md) · [SSRS inventory](https://github.com/db-agent/db-agent-cli/blob/main/docs/ssrs-inventory.md) · [Permissions](https://github.com/db-agent/db-agent-cli/blob/main/docs/permissions.md) · [Examples](https://github.com/db-agent/db-agent-cli/blob/main/examples/README.md)
+[Upgrade risk rules](https://github.com/db-agent/db-agent-kit/blob/main/docs/risk-rules.md) · [SSRS inventory](https://github.com/db-agent/db-agent-kit/blob/main/docs/ssrs-inventory.md) · [Permissions](https://github.com/db-agent/db-agent-kit/blob/main/docs/permissions.md) · [Examples](https://github.com/db-agent/db-agent-kit/blob/main/examples/README.md)
 
 Need the upgrade and report move done for you at a fixed price? [becloudready.com/sql-server](https://becloudready.com/sql-server)

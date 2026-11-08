@@ -1,7 +1,7 @@
 name: release
 # Publishes to PyPI with Trusted Publishing (OIDC): no API token is stored anywhere.
 # One-time setup on pypi.org: Your projects > Publishing > add a (pending) publisher with project name db-agent-kit,
-#   owner/repo = db-agent/db-agent-cli, workflow = release.yml, environment = pypi
+#   owner/repo = db-agent/db-agent-kit, workflow = release.yml, environment = pypi
 # For the TestPyPI dry run, do the same on test.pypi.org with environment = testpypi.
 on:
   push:
