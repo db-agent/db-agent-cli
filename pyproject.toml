@@ -3,7 +3,7 @@ requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
-name = "db-agent"
+name = "db-agent-kit"
 version = "0.2.0"
 description = "Read-only DBA toolkit CLI: SQL Server 2016/2017 upgrade and SSRS to Power BI inventory, Databricks workspace health and DBU cost checks."
 readme = "README.md"
@@ -41,9 +41,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/db-agent/db-agent-cli"
-Documentation = "https://github.com/db-agent/db-agent-cli/tree/main/docs"
-Issues = "https://github.com/db-agent/db-agent-cli/issues"
+Homepage = "https://github.com/db-agent/db-agent-kit"
+Documentation = "https://github.com/db-agent/db-agent-kit/tree/main/docs"
+Issues = "https://github.com/db-agent/db-agent-kit/issues"
 "Text-to-SQL agent" = "https://github.com/db-agent/db-agent"
 "Fixed-price help" = "https://becloudready.com/sql-server"
 
