@@ -1,6 +1,6 @@
 # db-agent CLI: read-only DBA toolkit for SQL Server, SSRS and Databricks
 
-Check a database before you upgrade, migrate or pay for another year of it. db-agent reads metadata only and writes a report you can hand to a manager: SQL Server 2016/2017 upgrade risks, an SSRS to Power BI report inventory, and Databricks workspace health with DBU spend. One command per engine. Nothing is changed on any server.
+Check a database before you upgrade, migrate or pay for another year of it. db-agent only reads, and writes a report you can hand to a manager: SQL Server 2016/2017 upgrade risks, an SSRS to Power BI report inventory, and Databricks workspace health with DBU spend. One command per engine. Nothing is changed on any server.
 
 Looking for the text-to-SQL agent? See [db-agent/db-agent](https://github.com/db-agent/db-agent).
 
