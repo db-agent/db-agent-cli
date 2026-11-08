@@ -51,8 +51,7 @@ sample database and run `make demo`. See [docs/demo.md](https://github.com/db-ag
 
 ## Install
 
-Today: from source, as above (Python 3.11 or newer). PyPI, a Docker image and a Windows single-file
-`.exe` are planned and **not built yet**.
+From source, as above (Python 3.11 or newer). A Docker image and a Windows single-file `.exe` do not exist yet.
 
 Run it as `db-agent sqlserver <command>`. The old `db-agent-sqlserver <command>` still works.
 
@@ -64,9 +63,10 @@ db-agent sqlserver validate --source "server=old,database=Sales,user=u" --target
 db-agent sqlserver report
 ```
 
-Output goes to `./dbagent-sqlserver-output` (change with `--out`). Windows authentication and Microsoft
-Entra ID need `--driver odbc` and the Microsoft ODBC Driver 18 (`pip install ".[odbc]"`); that path is
-**not tested yet**.
+Output goes to `./dbagent-sqlserver-output` (change with `--out`). Windows authentication needs `--driver odbc`,
+`pip install ".[odbc]"` and a Microsoft ODBC driver for SQL Server. The tool finds driver 18, 17 or 13 on its own; set
+`DBAGENT_ODBC_DRIVER` to force one. It was tested with driver 17 and a local Windows account (NTLM). Domain (Kerberos)
+logins and Microsoft Entra ID were not tested.
 
 ## What your DBA needs to grant
 
@@ -75,14 +75,14 @@ The exact T-SQL script is in [docs/permissions.md](https://github.com/db-agent/d
 
 ## Sample output
 
-`reports.csv`, one row per report (a few of the columns):
+`reports.csv`, one row per report (a few of the columns; run counts move with the date you run it):
 
 | path | classification | runs_365 | last_run | reasons |
 |---|---|---|---|---|
 | /Inventory/BillOfMaterials | move | 41 | 2026-11-03 | Plain report, no hard-to-move features |
-| /HR/EmployeeDirectory | review | 13 | 2026-11-02 | Custom code block (3 lines) |
+| /HR/EmployeeDirectory | review | 12 | 2026-11-02 | Custom code block (3 lines) |
 | /Purchasing/VendorSpend | review | 50 | 2026-11-04 | Dataset SQL could not be fully parsed (Spend); table list is a guess |
-| /Inventory/LegacyInventory | retire | 0 | | No runs in the last 365 days (log covers 520 days) |
+| /Inventory/LegacyInventory | retire | 0 | | No runs in the last 365 days (log covers 522 days) |
 
 ## What it does not do
 
@@ -107,9 +107,11 @@ The exact T-SQL script is in [docs/permissions.md](https://github.com/db-agent/d
 
 ## Status
 
-Version 0.1. Tested: 95 unit tests, and 8 integration tests that run against live SQL Server engines
-(see [docs/testing.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/testing.md) for exactly which engines, and what is not covered). `inventory` also ran against a real Azure SQL Database. Run on real SQL Server 2016, 2017 and 2022 engines and on a real SSRS 2016 server, including ODBC with Windows authentication. Not tested:
-SSRS 2017 and later, domain (Kerberos) authentication, Entra ID, Azure SQL Managed Instance.
+Version 0.2.0. What was tested is listed in [docs/testing.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/testing.md):
+
+- `sqlserver`: real SQL Server 2017 and 2022 (Linux, Docker), real SQL Server 2016 SP3 with a real SSRS 2016 server (Windows VM), and `inventory` on one Azure SQL Database (AdventureWorksLT). ODBC with Windows authentication was tested with a local account.
+- `databricks`: one small AWS workspace. See [docs/databricks-health.md](https://github.com/db-agent/db-agent-cli/blob/main/docs/databricks-health.md).
+- Not tested: SSRS 2017 and later, Power BI Report Server, domain (Kerberos) authentication, Entra ID, Azure SQL Managed Instance.
 
 [Upgrade risk rules](https://github.com/db-agent/db-agent-cli/blob/main/docs/risk-rules.md) · [SSRS inventory](https://github.com/db-agent/db-agent-cli/blob/main/docs/ssrs-inventory.md) · [Permissions](https://github.com/db-agent/db-agent-cli/blob/main/docs/permissions.md) · [Examples](https://github.com/db-agent/db-agent-cli/blob/main/examples/README.md)
 
